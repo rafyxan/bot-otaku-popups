@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer-core';
 export async function runBot() {
   const browser = await puppeteer.launch({
     headless: false, // pon en true para que no se vea el navegador
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: '/usr/bin/google-chrome', // Cambiar ruta en donde tengas instalado tu navegador
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
