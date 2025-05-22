@@ -1,0 +1,9 @@
+# Ignorar la carpeta node_modules
+node_modules/
+
+# Ignorar archivos generados por TypeScript
+*.js
+*.js.map
+
+# Ignorar la carpeta de salida si usas una configuración como "dist"
+dist/

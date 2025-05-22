@@ -4,4 +4,6 @@
 
 -Comando instalar chronium: LINUX sudo apt update && sudo apt install -y chromium-browser. WINDOWS choco install chromium -y
 
+-Instalar dotenv: npm install dotenv
+
 -Comando ejecutar programa: ts-node src/bot-test.ts

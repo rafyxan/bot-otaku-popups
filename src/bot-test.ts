@@ -1,4 +1,7 @@
 import puppeteer from 'puppeteer-core';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function runBot() {
   const browser = await puppeteer.launch({
@@ -12,6 +15,25 @@ export async function runBot() {
 
   const page = await browser.newPage();
 
+   // Activar la interceptación de peticiones para bloquear URLs sospechosas
+   await page.setRequestInterception(true);
+   page.on('request', (request) => {
+     const url = request.url();
+     // Bloquea cualquier petición que contenga hypnotizebaseballjesus.com o playanimenow.com
+     if (url.includes('hypnotizebaseballjesus.com') || url.includes('playanimenow.com')) {
+       console.log('Bloqueando petición a:', url);
+       request.abort();
+     } else {
+       request.continue();
+     }
+   });
+
+  // Ajustar la pantalla al tamaño especificado en .env
+  await page.setViewport({
+    width: parseInt(process.env.VIEWPORT_WIDTH || '1920', 10),
+    height: parseInt(process.env.VIEWPORT_HEIGHT || '1080', 10),
+  });
+
   // Detectar cuando se abre una nueva ventana/pestaña
   browser.on('targetcreated', async (target) => {
     if (target.type() === 'page') {
@@ -24,16 +46,30 @@ export async function runBot() {
   });
 
   // poner aqui la url del video
-  await page.goto('https://www3.animeflv.net/', { waitUntil: 'networkidle2' });
+  await page.goto(process.env.TARGET_URL || 'https://www3.animeflv.net/', { waitUntil: 'networkidle2' });
 
 
   console.log('Página principal abierta y lista.');
 
-  // Esperar 15 segundos 
-  // await new Promise(resolve => setTimeout(resolve, 15000));
+  // 1. Click en el label que abre el login (el label for="DpdwLnk-Login")
+  await page.click('label[for="DpdwLnk-Login"]');
+  console.log('Click en Login');
 
-  // Esto es pa cerrar el navegador
-  // await browser.close();
+  // 2. Esperar que el formulario sea visible
+  await page.waitForSelector('form[action="/auth/sign_in"] input[name="email"]', { visible: true });
+
+  // 3. Rellenar usuario y contraseña
+  await page.type('form[action="/auth/sign_in"] input[name="email"]', process.env.LOGIN_EMAIL || 'usuario@ejemplo.com', { delay: 100 });
+  await page.type('form[action="/auth/sign_in"] input[name="password"]', process.env.LOGIN_PASSWORD || 'tu_password', { delay: 100 });
+  console.log('Credenciales rellenadas');
+
+  // 4. Click en el botón INICIAR SESIÓN para enviar el formulario
+  await page.click('form[action="/auth/sign_in"] button[type="submit"]');
+  console.log('Formulario enviado, iniciando sesión...');
+
+  // Opcional: esperar a que se confirme que se ha iniciado sesión (puedes ajustar el selector)
+  await page.waitForNavigation({ waitUntil: 'networkidle2' });
+  console.log('Sesión iniciada');
 }
 
 runBot().catch(console.error);
