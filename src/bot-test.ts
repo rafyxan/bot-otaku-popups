@@ -51,25 +51,34 @@ export async function runBot() {
 
   console.log('Página principal abierta y lista.');
 
-  // 1. Click en el label que abre el login (el label for="DpdwLnk-Login")
-  await page.click('label[for="DpdwLnk-Login"]');
-  console.log('Click en Login');
+  
+  const email = process.env.LOGIN_EMAIL || '';
+  const password = process.env.LOGIN_PASSWORD || '';
 
-  // 2. Esperar que el formulario sea visible
-  await page.waitForSelector('form[action="/auth/sign_in"] input[name="email"]', { visible: true });
+  if (email.trim() === '' || password.trim() === '') {
+    console.log('Usuario o contraseña vacíos, se omite el inicio de sesión');
+  } else {
 
-  // 3. Rellenar usuario y contraseña
-  await page.type('form[action="/auth/sign_in"] input[name="email"]', process.env.LOGIN_EMAIL || 'usuario@ejemplo.com', { delay: 100 });
-  await page.type('form[action="/auth/sign_in"] input[name="password"]', process.env.LOGIN_PASSWORD || 'tu_password', { delay: 100 });
-  console.log('Credenciales rellenadas');
+    // 1. Click en el label que abre el login (el label for="DpdwLnk-Login")
+    await page.click('label[for="DpdwLnk-Login"]');
+    console.log('Click en Login');
 
-  // 4. Click en el botón INICIAR SESIÓN para enviar el formulario
-  await page.click('form[action="/auth/sign_in"] button[type="submit"]');
-  console.log('Formulario enviado, iniciando sesión...');
+    // 2. Esperar que el formulario sea visible
+    await page.waitForSelector('form[action="/auth/sign_in"] input[name="email"]', { visible: true });
 
-  // Opcional: esperar a que se confirme que se ha iniciado sesión (puedes ajustar el selector)
-  await page.waitForNavigation({ waitUntil: 'networkidle2' });
-  console.log('Sesión iniciada');
+    // 3. Rellenar usuario y contraseña
+    await page.type('form[action="/auth/sign_in"] input[name="email"]', email, { delay: 100 });
+    await page.type('form[action="/auth/sign_in"] input[name="password"]', password, { delay: 100 });
+    console.log('Credenciales rellenadas');
+
+    // 4. Click en el botón INICIAR SESIÓN para enviar el formulario
+    await page.click('form[action="/auth/sign_in"] button[type="submit"]');
+    console.log('Formulario enviado, iniciando sesión...');
+
+    // Opcional: esperar navegación
+    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    console.log('Sesión iniciada');
+  }
 }
 
 runBot().catch(console.error);

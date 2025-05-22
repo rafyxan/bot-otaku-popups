@@ -7,6 +7,7 @@
 -Instalar dotenv: npm install dotenv.
 
 -Introducir esto en el archivo .env en caso de no tenerlo crearlo: 
+
 # URL de la página a visitar
 TARGET_URL=https://www3.animeflv.net/
 
@@ -14,7 +15,7 @@ TARGET_URL=https://www3.animeflv.net/
 VIEWPORT_WIDTH=1920
 VIEWPORT_HEIGHT=1080
 
-# Credenciales para login
+# Credenciales para login (En caso de no tener cuenta dejalo vacio)
 LOGIN_EMAIL=tu_gmail_de_animeflv
 LOGIN_PASSWORD=tu_contraseña
 
